@@ -11,6 +11,18 @@ const log = (...args: unknown[]) =>
 app.use(express.json());
 app.use(cors());
 
+app.use((err: any, req: any, res: any, next: any) => {
+  console.log("JSON PARSE ERROR:", err);
+  console.log("RAW BODY:", err.body);
+  res.status(400).json({ error: err.message });
+});
+
+app.use((req, res, next) => {
+  console.log("============================================");
+  console.log("BODY:", req.body);
+  next();
+});
+
 // log every request with its status and duration once the response is sent
 app.use((req, res, next) => {
   const start = performance.now();
@@ -128,8 +140,8 @@ app.post("/rooms/:id/book", (req, res) => {
 
 app.listen(port, () => log("code is running at", port));
 
-setInterval(() => {
-  fs.writeFileSync("rooms.json", JSON.stringify(Array.from(rooms)));
-  fs.writeFileSync("bookings.json", JSON.stringify(Array.from(bookings)));
-  fs.writeFileSync("locks.json", JSON.stringify(Array.from(locks)));
-}, 5 * 1000);
+// setInterval(() => {
+//   fs.writeFileSync("rooms.json", JSON.stringify(Array.from(rooms)));
+//   fs.writeFileSync("bookings.json", JSON.stringify(Array.from(bookings)));
+//   fs.writeFileSync("locks.json", JSON.stringify(Array.from(locks)));
+// }, 5 * 1000);

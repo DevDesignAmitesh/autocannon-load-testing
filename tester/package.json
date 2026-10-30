@@ -1,0 +1,16 @@
+{
+  "name": "tester",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/autocannon": "^7.12.7",
+    "autocannon": "^8.0.0"
+  }
+}
