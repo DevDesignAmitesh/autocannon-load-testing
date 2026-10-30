@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import fs from "fs";
 
 const app = express();
 const port = 4000;
@@ -107,7 +108,7 @@ app.post("/rooms/:id/book", (req, res) => {
     return;
   }
 
-  const key = `r:${roomId}-u${userId}`;
+  const key = `r:${roomId}`;
 
   if (locks.has(key)) {
     log(`booking rejected: lock held key=${key}`);
@@ -115,12 +116,7 @@ app.post("/rooms/:id/book", (req, res) => {
     return;
   }
 
-  const previousUser = bookings.get(roomId);
-  if (previousUser !== undefined && previousUser !== userId) {
-    log(
-      `booking overwrite: room=${roomId} was booked by user=${previousUser}, now user=${userId}`,
-    );
-  }
+  locks.add(key);
 
   bookings.set(roomId, userId);
   log(
@@ -131,3 +127,9 @@ app.post("/rooms/:id/book", (req, res) => {
 });
 
 app.listen(port, () => log("code is running at", port));
+
+setInterval(() => {
+  fs.writeFileSync("rooms.json", JSON.stringify(Array.from(rooms)));
+  fs.writeFileSync("bookings.json", JSON.stringify(Array.from(bookings)));
+  fs.writeFileSync("locks.json", JSON.stringify(Array.from(locks)));
+}, 5 * 1000);
